@@ -1,0 +1,152 @@
+package tcp.server;
+import java.net.*;
+import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import tcp.server.UserThread;
+import org.json.JSONObject;
+
+public class main {
+
+	public static List<Socket> li = Collections.synchronizedList(new ArrayList<Socket>());
+	public static JSONObject json = new JSONObject();
+	public static Thread uth = null;
+	public static int serverPort=0;
+
+    public static void main(String[] args) throws IOException{
+		long pstart=System.currentTimeMillis();
+		Lang.prepare();
+		//System.out.println("Simple Chat Server v1 is starting now..");
+		print(Lang.get("server.startup"));
+		print(Lang.get("debug.build"));
+		//System.out.println("## This is a debug build.");
+		//System.out.println("## If you found a bug, please report it.");
+		ConsoleInput ci = new ConsoleInput();
+		new Thread(ci).start();
+		File configfile = new File("server.properties");
+		if(!configfile.exists()){
+			print(Lang.get("config.not.exist"));
+			configfile.createNewFile();
+			String defa="server_port=12345";
+			FileOutputStream fos = new FileOutputStream(configfile);
+			fos.write(defa.getBytes());
+			fos.flush();
+			fos.close();
+		}
+		print(Lang.get("config.loading"));
+		try{
+			BufferedReader ina = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(new File("server.properties"))),"UTF-8"));
+			Properties prop = new Properties();
+			prop.load(ina);
+			serverPort=Integer.parseInt(prop.getProperty("server_port","12345"));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		long pend=System.currentTimeMillis();
+		long takes=pend-pstart;
+		print(Lang.get("server.start.port")+serverPort);
+		System.out.println(Lang.get("server.start.takes")+" "+takes+"ms");
+
+        while(true){
+               try (ServerSocket ss = new ServerSocket(serverPort)) {
+                   Socket s = ss.accept();
+				   //s.setKeepAlive(true);
+				   //System.out.println(Lang.get("user.status.connect")+": "+s.getInetAddress()+":"+s.getPort());
+                   li.add(s);
+
+                   //启动服务器线程
+                   uth=new Thread(new UserThread(s,li));
+				   uth.start();
+
+               }catch (Exception e){
+                   e.printStackTrace();
+               }
+
+           }
+
+       }
+	   public static void print(String str){
+			  System.out.println(str);
+	   }
+	   public static void addtouser(String user,String addvalue){
+			  json.put(user,addvalue);
+	   }
+	   public static void deluser(String user){
+			  json.put(user,"");
+	   }
+	   public static String getnick(Socket s){
+			   return getuser(s.getInetAddress()+":"+s.getPort()+"nick");
+	   }
+	   public static String getuser(String user){
+			  String rt;
+			  try{
+					  rt=json.getString(user);
+			  }catch(Exception e){
+					  rt="";
+			  }
+			  return rt;
+	   }
+	   public static boolean nickisset(String nick){
+			  for(Object itm:json.keySet()){
+					  String a=json.getString(itm.toString());
+					  if (a.equals(nick)){
+							 return true;
+					  }
+			  }
+	   return false;
+	   }
+	   public static boolean hasnick(Socket _s){
+			   String uall=_s.getInetAddress()+":"+_s.getPort();
+			   if(nickisset(uall+"nick")){
+					  return true;
+			   }
+			   return false;
+	   }
+	   public static void kill(Socket s){
+	   try{
+	   if(getuser(s.getInetAddress()+":"+s.getPort()+"nick").length() > 0){
+	   System.out.println(Lang.get("user.status.disconnect")+": "+getnick(s)+" ("+s.getInetAddress()+":"+s.getPort()+")");
+	   }
+	   deluser(s.getInetAddress()+":"+s.getPort()+"nick");
+	   if(li.size() == 1){
+			  li.removeAll(li);
+	   }else{
+			  li.remove(s);
+	   }
+	   }catch(Exception e){
+			  e.printStackTrace();
+			  }
+	   }
+	   public static void tellAll(String msg){
+			try{
+	   		for (Socket _s : li){
+				BufferedWriter tbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
+				tbw.write(msg);
+				tbw.newLine();
+				tbw.flush();
+			}
+			}catch(Exception e){}
+	   }
+	   public static void stopServer(){
+			tellAll(Lang.get("tellall.server.stop"));
+			for (Socket _s : li){
+				try{
+				_s.close();
+				}catch(Exception e){}
+			}
+	   }
+	   public static Socket getUserSocket(String ual){
+			Socket back=null;
+			for (Socket _s : li){
+				String uall=_s.getInetAddress()+":"+_s.getPort();
+				if(uall.equals(ual)){
+					back=_s;
+				}
+			}
+			return back;
+	   }
+}
+
+
