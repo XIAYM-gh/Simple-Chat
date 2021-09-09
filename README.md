@@ -36,11 +36,14 @@ java -jar 文件名.jar
 
 # Compile
 
-编译时需要包含jline3<br>
-并且把jline3的jar文件内的org文件夹添加到server/client.jar中<br>
-服务端主类: tcp.server.main<br>
-客户端主类: tcp.client.main<br>
+编译时需要包含运行库<br>
+
+服务端主类: `tcp.server.main`
+
+客户端主类: `tcp.client.main`
+
 可以使用命令编译(jdk 8/11 Release中使用jdk/jre 11):
+
 
 客户端:
 
