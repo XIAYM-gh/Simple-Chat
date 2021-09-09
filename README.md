@@ -32,15 +32,14 @@ java -jar 文件名.jar
 
 服务端可以使用 `help` 命令查看所有帮助.
 
-<br>
-
 客户端目前只有 `stop` 和 `online` 能够使用.
-
-<br>
 
 # Compile
 
 编译时需要包含jline3<br>
 并且把jline3的jar文件内的org文件夹添加到server/client.jar中<br>
 服务端主类: tcp.server.main<br>
-客户端主类: tcp.client.main
+客户端主类: tcp.client.main<br>
+均可以使用此命令编译(jdk 8/11 Release中使用jdk/jre 11):
+
+`root@localhost:~/源码文件夹/# javac -d . -cp jline3.jar -encoding UTF-8 *.java`
