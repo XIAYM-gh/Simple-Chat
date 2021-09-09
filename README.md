@@ -42,4 +42,10 @@ java -jar 文件名.jar
 客户端主类: tcp.client.main<br>
 均可以使用此命令编译(jdk 8/11 Release中使用jdk/jre 11):
 
-`root@localhost:~/源码文件夹/# javac -d . -cp jline3.jar -encoding UTF-8 *.java`
+```shell
+javac -d . -cp jline3.jar -encoding UTF-8 *.java
+echo "Manifest-Version: 1.0">mf.txt
+echo "Main-Class: 主类(tcp.client/server.main)">>mf.txt
+#解压jline3.jar到当前目录生成org和META-INF文件夹
+jar -cvmf mf.txt 文件名.jar ./tcp ./org
+```
