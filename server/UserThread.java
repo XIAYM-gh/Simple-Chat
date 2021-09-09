@@ -1,19 +1,15 @@
 package tcp.server;
-/**
- * 服务器多线程实现，用来提高效率
-  */
    
-   import java.io.*;
-   import java.net.Socket;
-   import java.text.SimpleDateFormat;
-   import java.util.ArrayList;
-   import java.util.Collections;
-   import java.util.Date;
-   import java.util.List;
+import java.io.*;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.*;
 
-   public class UserThread implements Runnable {
-	   boolean flagg=true;
-	   public static boolean nerr=false;
+public class UserThread implements Runnable {
+	  boolean flagg=true;
+	  public static boolean nerr=false;
        private Socket s;
        private List<Socket> li;
 
@@ -24,8 +20,8 @@ package tcp.server;
 
        @Override
        public void run() {
-			 Thread t = new Thread(()->{
-					 while(flagg){
+			Thread t = new Thread(()->{
+					while(flagg){
 						try{
 							Thread.sleep(200);
 							s.sendUrgentData(0xFF);
@@ -44,16 +40,15 @@ package tcp.server;
 							}catch(Exception eee){}
 							main.kill(s);
 						}
-					 }
-					 });
-			 t.start();
-			 boolean flag=true;
-			 String lox="";
+					}
+					});
+			t.start();
+			boolean flag=true;
+			String lox="";
            try {
                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
                        s.getOutputStream(),"UTF-8"));
 
-               //收到消息之后发送给全部客户端
                BufferedReader br = new BufferedReader(new InputStreamReader(
                        s.getInputStream(),"UTF-8"));
 
@@ -88,8 +83,39 @@ package tcp.server;
 					bw.newLine();
 					bw.flush();
 				}else{
-
-
+						
+				if(line.startsWith("PASS ")){
+					if(!main.hasnick(s)){
+						File ud = new File("data/"+main.getnick(s)+".properties");
+						if(!ud.exists()){
+						main.print("Now creating user data file..");
+						String datatext="password="+SHAUtil.SHA256(line.substring(5));
+						FileOutputStream fos = new FileOutputStream(ud);
+						fos.write(datatext.getBytes());
+						fos.flush();
+						fos.close();
+						main.addtouser(s.getInetAddress()+":"+s.getPort()+"logged","true");
+						}else{
+						String pass=SHAUtil.SHA256(line.substring(5));
+						BufferedReader ina = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(new File("data/"+main.getnick(s)+".properties"))),"UTF-8"));
+						Properties prop=new Properties();
+						prop.load(ina);
+						String config_pass=prop.getProperty("password");
+						if(pass.equals(config_pass)){
+							main.addtouser(s.getInetAddress()+":"+s.getPort()+"logged","true");
+						}else{
+							bw.write("Disconnected by server:\nWrong password");
+							bw.newLine();
+							bw.flush();
+							s.close();
+						}}
+					}else{
+						bw.write("Disconnected by server:\nYou don't have a nick!");
+						bw.newLine();
+						bw.flush();
+						s.close();
+				}
+				}else{
 				if(line.startsWith("NICK ")){
 					if(line.length() <=7 || line.length() >=18){
 						nerr=true;
@@ -102,11 +128,9 @@ package tcp.server;
 						String[] NickSplit=line.split("NICK ");
 						String unick=NickSplit[1];
 						if(!main.nickisset(unick) && !main.hasnick(s)){
-						main.addtouser(uall+"nick",unick);
+						main.addtouser(uall+"nick",unick.replaceAll(" ","_"));
 						main.print(Lang.get("user.status.connect")+": "+unick+" ("+s.getInetAddress()+":"+s.getPort()+")");
 						bw.write(Lang.get("join.welcome")+"\n"+Lang.get("welcome.users.online")+li.size());
-						bw.newLine();
-						bw.write("Welcome, "+unick+"!");
 						bw.newLine();
 						bw.flush();
 						for (Socket _s : li){
@@ -126,41 +150,50 @@ package tcp.server;
 					}
 				}else{
 				if(line.startsWith("CHAT ")&&!line.equals("CHAT ")){
-				   line=line.split("CHAT ")[1];
+				  line=line.split("CHAT ")[1];
                    if(!li.isEmpty()) {
                        for (Socket _s : li){
-							   String u1all=_s.getInetAddress()+":"+_s.getPort();
-							   String u2all=u1all+"nick";
-							   if(main.getuser(u2all) == "" || main.getuser(u2all) == null){
-							   BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
-							   nerr=true;
-							   main.print("*Kicked by server: You don't have a nick!");
-							   dbw.write("Disconnected by server:\nYou don't have a nick!");
-							   dbw.newLine();
-							   dbw.flush();
-							   _s.close();
-							   }
+							  String u1all=_s.getInetAddress()+":"+_s.getPort();
+							  String u2all=u1all+"nick";
+							  String u3all=u1all+"logged";
+							  if(main.getuser(u2all) == "" || main.getuser(u2all) == null){
+							  BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
+							  nerr=true;
+							  main.print("*Kicked by server: You don't have a nick!");
+							  dbw.write("Disconnected by server:\nYou don't have a nick!");
+							  dbw.newLine();
+							  dbw.flush();
+							  _s.close();
+							  }
+							  if(!main.getuser(u3all).equals("true") || main.getuser(u3all) == null){
+							  BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
+							  dbw.write("Disconnected by server:\nYou're not logged in!");
+							  dbw.newLine();
+							  dbw.flush();
+							  s.close();
+							  }
                                BufferedWriter _bw = new BufferedWriter(new OutputStreamWriter(
                                        _s.getOutputStream(),"UTF-8"));
                                lox="<"+main.getuser(s.getInetAddress()+":"+s.getPort()+"nick")+ ">" + " " + line;
-							   _bw.write(lox);
+							  _bw.write(lox);
                                _bw.newLine();
                                _bw.flush();
 
                        }
-					   String u3all=s.getInetAddress()+":"+s.getPort();
-					   main.print(u3all+" "+lox);
+					  String u3all=s.getInetAddress()+":"+s.getPort();
+					  main.print(u3all+" "+lox);
                    }
 				}else{
 					s.close();
-				}}}}}}
+				}}}}}}}
+
           	} catch (Exception e) {
-			   String err=e.toString();
-			   if(!err.contains("Socket closed") && !err.contains("Connection reset")){
+			  String err=e.toString();
+			  if(!err.contains("Socket closed") && !err.contains("Connection reset") && !err.contains("Socket is closed")){
                System.out.println("** Error: "+e.toString()+"\n** Auto Closed Connection.");
-			   flag=false;
-			   //main.kill(s);
-			   }
+			  flag=false;
+			  //main.kill(s);
+			  }
            }
-		   }
+		  }
 }

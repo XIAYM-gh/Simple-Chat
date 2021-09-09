@@ -2,10 +2,6 @@ package tcp.server;
 import java.net.*;
 import java.util.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import tcp.server.UserThread;
 import org.json.JSONObject;
 
 public class main {
@@ -25,6 +21,10 @@ public class main {
 		//System.out.println("## If you found a bug, please report it.");
 		ConsoleInput ci = new ConsoleInput();
 		new Thread(ci).start();
+		File userdatadir = new File("data/");
+		if(!userdatadir.exists()){
+			userdatadir.mkdir();
+		}
 		File configfile = new File("server.properties");
 		if(!configfile.exists()){
 			print(Lang.get("config.not.exist"));
@@ -52,11 +52,8 @@ public class main {
         while(true){
                try (ServerSocket ss = new ServerSocket(serverPort)) {
                    Socket s = ss.accept();
-				   //s.setKeepAlive(true);
-				   //System.out.println(Lang.get("user.status.connect")+": "+s.getInetAddress()+":"+s.getPort());
                    li.add(s);
 
-                   //启动服务器线程
                    uth=new Thread(new UserThread(s,li));
 				   uth.start();
 
@@ -110,6 +107,7 @@ public class main {
 	   System.out.println(Lang.get("user.status.disconnect")+": "+getnick(s)+" ("+s.getInetAddress()+":"+s.getPort()+")");
 	   }
 	   deluser(s.getInetAddress()+":"+s.getPort()+"nick");
+	   deluser(s.getInetAddress()+":"+s.getPort()+"logged");
 	   if(li.size() == 1){
 			  li.removeAll(li);
 	   }else{
@@ -148,5 +146,4 @@ public class main {
 			return back;
 	   }
 }
-
 

@@ -13,16 +13,11 @@ package tcp.server;
     public ConsoleInput() {
     }
 
-
-//重写run()方法
     @Override
     public void run() {
         try {
-        //包装键盘输入
             BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
 
-
-//客户端发送信息
             String line = null;      //初始化line
             while ((line = buf.readLine()) != null) {
 				if (line.equals("help")){

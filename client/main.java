@@ -65,14 +65,27 @@ public class main {
 		bw.newLine();
 		bw.flush();
 		String ababab=null;
+		String status_pass=null;
 		while ((ababab = br.readLine()) != null) {
-				System.out.println(ababab);
+				status_pass=ababab;
 				break;
 		}
-
-		bw.write("NICK "+nick);
-		bw.newLine();
-		bw.flush();
+		if(status_pass.equals("true")){
+				System.out.println("服务器需要身份验证，请输入您的密码来注册/登录");
+				char[] upc = cons.readPassword("密码: ");
+				String upa = String.valueOf(upc);
+				if(upa.length() > 3){
+					bw.write("NICK "+nick);
+					bw.newLine();
+					bw.flush();
+					bw.write("PASS "+upa);
+					bw.newLine();
+					bw.flush();
+				}else{
+					System.out.println("错误: 您的密码长度过短");
+					System.exit(-4);
+				}
+		}
 
         SeThread st = new SeThread(bw,s);    //发送线程类
         ReThread rt = new ReThread(br);    //接收线程类
