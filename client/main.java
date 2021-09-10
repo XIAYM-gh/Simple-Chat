@@ -85,6 +85,11 @@ public class main {
 					System.out.println("错误: 您的密码长度过短");
 					System.exit(-4);
 				}
+		}else{
+				System.out.println("服务器不需要验证，正在加入..");
+				bw.write("NICK "+nick);
+				bw.newLine();
+				bw.flush();
 		}
 
         SeThread st = new SeThread(bw,s);    //发送线程类

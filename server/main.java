@@ -10,6 +10,7 @@ public class main {
 	public static JSONObject json = new JSONObject();
 	public static Thread uth = null;
 	public static int serverPort=0;
+	public static String passProtect=null;
 
     public static void main(String[] args) throws IOException{
 		long pstart=System.currentTimeMillis();
@@ -29,7 +30,7 @@ public class main {
 		if(!configfile.exists()){
 			print(Lang.get("config.not.exist"));
 			configfile.createNewFile();
-			String defa="server_port=12345";
+			String defa="server_port=12345\npassword_protect=true";
 			FileOutputStream fos = new FileOutputStream(configfile);
 			fos.write(defa.getBytes());
 			fos.flush();
@@ -41,6 +42,7 @@ public class main {
 			Properties prop = new Properties();
 			prop.load(ina);
 			serverPort=Integer.parseInt(prop.getProperty("server_port","12345"));
+			passProtect=prop.getProperty("password_protect","true");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -144,6 +146,13 @@ public class main {
 				}
 			}
 			return back;
+	   }
+	   public static boolean getIfPassProtect(){
+			boolean ifp=false;
+			if(passProtect.equals("true")){
+				ifp=true;
+			}
+			return ifp;
 	   }
 }
 

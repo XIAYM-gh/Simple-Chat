@@ -20,6 +20,9 @@ public class UserThread implements Runnable {
 
        @Override
        public void run() {
+			if(main.getIfPassProtect() == false){
+				main.addtouser(s.getInetAddress()+":"+s.getPort()+"logged","true");
+			}
 			Thread t = new Thread(()->{
 					while(flagg){
 						try{
@@ -63,7 +66,11 @@ public class UserThread implements Runnable {
 				break;
 				}else{
 				if(line.equals("SIMPLE_CHAT_CHECK_NEED_PASSWORD")){
+						if(main.getIfPassProtect() == true){
 						bw.write("true");
+						}else{
+						bw.write("false");
+						}
 						bw.newLine();
 						bw.flush();
 				}else{
