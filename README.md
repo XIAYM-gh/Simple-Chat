@@ -1,68 +1,70 @@
-### Simple Chat还未完全完成，如果发现问题请提交issue!
+### Simple Chat is not finish yet, if you find a bug or some bugs, please open an issue!
+
+English | [中文](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/blob/master/README_cn.md)
 
 # Feature
 
- - 多线程心跳检测
- - 能够踢出在线用户(通过IP地址)
- - 当浏览器访问时会返回警告页面
- - 自动屏蔽错误的连接请求
- - 轻量化
+ - Heartbeat sending
+ - Kick online users by IP Address
+ - Returns a "warning page" if someone uses a web browser to access
+ - Not reporting wrong connections (e.g. Using a web browser)
+ - Light
 
 # Usage
 
-需求: `JDK/JRE 11+`
+Requirement: `JDK/JRE 11+`
 
-启动方式:<br>
+How to launch:<br>
 
 ```shell
-java -jar 文件名.jar
+java -jar <File name>.jar
 ```
 
-服务端目前支持的语言:
+Server-side language support:
 
 `中文(简体) , English`
 
-客户端目前支持的语言:
+Client-side language support:
 
 `中文(简体)`
 
-** 目前还在适配阶段 **
+** English is not localized yet **
 
 # Help
 
-服务端可以使用 `help` 命令查看所有帮助.
+Server-side: type `help`
 
-客户端目前只有 `stop` 和 `online` 能够使用.
+Client-side: only `stop` and `online`
 
 # Compile
 
-编译时需要包含运行库<br>
+It requires some libs<br>
 
-服务端主类: `tcp.server.main`
+Server's main class: `tcp.server.main`
 
-客户端主类: `tcp.client.main`
+Client's main class: `tcp.client.main`
 
-可以使用命令编译(jdk 8/11 Release中使用jdk/jre 11):
+You can use the commands below to compile(jdk 8/11):
 
 
-客户端:
+Client side:
 
 ```shell
-#目录 client/
+#Work Directory: client/
 javac -d . -cp jline3.jar -encoding UTF-8 *.java
 echo "Manifest-Version: 1.0">mf.txt
 echo "Main-Class: tcp.client.main">>mf.txt
-#解压jline3.jar到当前目录生成org和META-INF文件夹
+#Unzip jline3.jar to get "org" folder
 jar -cvmf mf.txt client.jar ./tcp ./org
 ```
 
-服务端:
+Server side:
 
 ```shell
-# 目录 server/
+#Work Directory: server/
 javac -d . -cp json.jar -encoding UTF-8 *.java
 echo "Manifest-Version: 1.0">mf.txt
 echo "Main-Class: tcp.client.main">>mf.txt
-#解压json.jar到当前目录生成org和META-INF文件夹
+#Unzip json.jar to get "org" folder
 jar -cvmf mf.txt server.jar ./tcp ./org
 ```
