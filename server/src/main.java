@@ -71,9 +71,9 @@ public class main {
 	   public static void print(String str){
 			  String[] strsp=str.split("\n");
 			  for(String str_:strsp){
-				  Date dNow = new Date();
-				  SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss");
-				  System.out.println("["+ft.format(dNow)+"] "+str_);
+				  Date dNow = new Date(System.currentTimeMillis());
+				  SimpleDateFormat flast = new SimpleDateFormat("HH:mm:ss");
+				  System.out.println("["+flast.format(dNow)+"] "+str_);
 			  }
 	   }
 	   public static void addtouser(String user,String addvalue){
