@@ -7,19 +7,23 @@ package tcp.server;
   import java.io.InputStreamReader;
   import java.text.SimpleDateFormat;
   import java.util.Date;
+  import org.jline.reader.*;
+  import org.jline.terminal.*;
 
-  public class ConsoleInput implements Runnable {     //实现Runnable接口
-  //带参构造，传入输出流对象
+  public class ConsoleInput implements Runnable {
+
     public ConsoleInput() {
     }
 
     @Override
     public void run() {
         try {
-            BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
+            //BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
+			Terminal terminal = TerminalBuilder.builder().system(true).build();
+			LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 
-            String line = null;      //初始化line
-            while ((line = buf.readLine()) != null) {
+            while (true) {
+				String line = lineReader.readLine("");
 				if (line.equals("help")){
 				//main.print("Available Commands:\nstop\n - Stop the server normally.");
 				main.print(Lang.get("help.list"));
@@ -55,10 +59,10 @@ package tcp.server;
 					}
 				}else{
                 if ("stop".equals(line)) {
-				buf.close();
 				main.print(Lang.get("server.stop"));
                 main.stopServer();
 				Thread.sleep(1000);
+				System.out.print("\r");
 				System.exit(0);
                 }else{
 					if(line.length() > 0){
@@ -74,9 +78,33 @@ package tcp.server;
 
 
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (UserInterruptException ue) {
+
+			// Close server
+			try{
+			main.print(Lang.get("server.stop"));
+			main.stopServer();
+			Thread.sleep(1000);
+			System.out.print("\r");
+			System.exit(0);
+			}catch(Exception e114514){}
+
+		} catch (EndOfFileException eofe) {
+
+			// Close Server
+			try{
+			main.print(Lang.get("server.stop"));
+			main.stopServer();
+			Thread.sleep(1000);
+			System.out.print("\r");
+			System.exit(0);
+			}catch(Exception e1919810){}
+
+		} catch (Exception e){
+
+			e.printStackTrace();
+
+		}
 
     }
   }

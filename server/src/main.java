@@ -72,8 +72,9 @@ public class main {
 			  for(String str_:strsp){
 				  Date dNow = new Date(System.currentTimeMillis());
 				  SimpleDateFormat flast = new SimpleDateFormat("HH:mm:ss");
-				  System.out.println("["+flast.format(dNow)+"] "+str_);
+				  System.out.println("\r["+flast.format(dNow)+"] "+str_);
 			  }
+			  System.out.print("> ");
 	   }
 	   public static void addtouser(String user,String addvalue){
 			  json.put(user,addvalue);

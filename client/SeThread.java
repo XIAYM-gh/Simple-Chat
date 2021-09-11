@@ -22,7 +22,7 @@ import org.jline.terminal.*;
 		Terminal terminal = TerminalBuilder.builder().system(true).build();
 		LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 		while(true){
-            String line = lineReader.readLine("> ");
+            String line = lineReader.readLine("");
                 if ("stop".equals(line)) {
                 bw.close();
 				s.close();

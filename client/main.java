@@ -91,6 +91,8 @@ public class main {
 				bw.flush();
 		}
 
+		System.out.print("> ");
+
         SeThread st = new SeThread(bw,s);
         ReThread rt = new ReThread(br);
 		HeartBeat hb = new HeartBeat(s);
