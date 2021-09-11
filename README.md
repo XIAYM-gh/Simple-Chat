@@ -26,9 +26,7 @@ Server-side language support:
 
 Client-side language support:
 
-`中文(简体)`
-
-** English is not localized yet **
+`中文(简体) , English`
 
 # Help
 
