@@ -22,18 +22,28 @@ import org.jline.terminal.*;
 		Terminal terminal = TerminalBuilder.builder().system(true).build();
 		LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 		while(true){
-            String line = lineReader.readLine(">");
+            String line = lineReader.readLine("> ");
                 if ("stop".equals(line)) {
-				//buf.close();
                 bw.close();
 				s.close();
                     break;
                 }
 
+				if(line.equals("createLang")){
+					File dir = new File("lang/");
+					File[] files = dir.listFiles();
+					for(File file : files){
+						file.delete();
+					}
+					Lang.prepare();
+				}else{
+
 				if(!line.equals("")){
                 bw.write("CHAT "+line);
                 bw.newLine();
                 bw.flush();
+				}
+
 				}
 		}
         } catch (UserInterruptException ue) {

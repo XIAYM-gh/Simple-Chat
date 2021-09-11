@@ -15,25 +15,26 @@ public class main {
 
 		//System.out.println(Charset.defaultCharset().name());
 		//↑ It's only for debugging
+		Lang.prepare();
+
 		String nick="ERROR";
-		System.out.println("L O G I N ------");
-		String nickc = cons.readLine("输入昵称: ");
-		if(nickc != null && nickc != "" && nickc != " "){
+		System.out.println("Simple Chat Client - v1");
+		String nickc = cons.readLine(Lang.get("startup.nick.enter"));
+		if(nickc != null && nickc != "" && nickc.length() >= 3){
 			nick=nickc;
 		}else{
 			nick="ERROR";
-			System.out.println("您的昵称非法!");
+			System.out.println(Lang.get("nick.invalid"));
 			System.exit(-1);
 		}
 
 		String servip="127.0.0.1:12345";
 		String ipadd="127.0.0.1";
 		int port=12345;
-		//System.out.println("请输入服务器ip:");
-		servip=cons.readLine("服务器ip: ");
+		servip=cons.readLine(Lang.get("startup.ip.enter"));
 			 if(!servip.contains(":")){
-					 System.out.println("请带端口号!");
-					 System.exit(-1);
+					 ipadd=servip;
+					 port=12345;
 			 }else{
 					 String[] ipaddress=servip.split(":");
 					 ipadd=ipaddress[0];
@@ -42,25 +43,22 @@ public class main {
 
 		Socket s=null;
 
-        //创建Socket对象，指定ip和端口
 		try{
         s = new Socket(ipadd,port);
 		}catch(Exception e){
-			System.out.println("无法连接到服务器:");
+			System.out.println(Lang.get("connect.failed"));
 			System.out.println(e.toString());
 			System.exit(-2);
 		}
 
-		System.out.println("Simple Chat 客户端已启动, 输入 \"stop\" 关闭客户端");
-
-        //包装输入输出流，用作参数传递
 		try{
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 s.getInputStream(),"UTF-8"));
         bw = new BufferedWriter(new OutputStreamWriter(
                 s.getOutputStream(),"UTF-8"));
 
-		System.out.println("开始查询服务器验证，如果长时间卡在这一步请重启客户端!");
+		//System.out.println("开始查询服务器验证，如果长时间卡在这一步请重启客户端!");
+		print(Lang.get("process.check_verify"));
 		bw.write("SIMPLE_CHAT_CHECK_NEED_PASSWORD");
 		bw.newLine();
 		bw.flush();
@@ -71,8 +69,9 @@ public class main {
 				break;
 		}
 		if(status_pass.equals("true")){
-				System.out.println("服务器需要身份验证，请输入您的密码来注册/登录");
-				char[] upc = cons.readPassword("密码: ");
+				//System.out.println("服务器需要身份验证，请输入您的密码来注册/登录");
+				print(Lang.get("verify.password_required"));
+				char[] upc = cons.readPassword(Lang.get("startup.password.enter"));
 				String upa = String.valueOf(upc);
 				if(upa.length() > 3){
 					bw.write("NICK "+nick);
@@ -82,22 +81,20 @@ public class main {
 					bw.newLine();
 					bw.flush();
 				}else{
-					System.out.println("错误: 您的密码长度过短");
+					System.out.println(Lang.get("password.too_short"));
 					System.exit(-4);
 				}
 		}else{
-				System.out.println("服务器不需要验证，正在加入..");
+				System.out.println(Lang.get("verify.not_required"));
 				bw.write("NICK "+nick);
 				bw.newLine();
 				bw.flush();
 		}
 
-        SeThread st = new SeThread(bw,s);    //发送线程类
-        ReThread rt = new ReThread(br);    //接收线程类
+        SeThread st = new SeThread(bw,s);
+        ReThread rt = new ReThread(br);
 		HeartBeat hb = new HeartBeat(s);
 
-
-        //启动发送接收线程
         new Thread(new SeThread(bw,s)).start();
         new Thread(new ReThread(br)).start();
 		new Thread(new HeartBeat(s)).start();
@@ -105,4 +102,7 @@ public class main {
 		}
     }
 
+	public static void print(String str){
+		System.out.println(str);
+	}
 }
