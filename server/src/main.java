@@ -2,6 +2,7 @@ package tcp.server;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import java.text.*;
 import org.json.JSONObject;
 
 public class main {
@@ -15,11 +16,11 @@ public class main {
     public static void main(String[] args) throws IOException{
 		long pstart=System.currentTimeMillis();
 		Lang.prepare();
-		//System.out.println("Simple Chat Server v1 is starting now..");
+		//print("Simple Chat Server v1 is starting now..");
 		print(Lang.get("server.startup"));
 		print(Lang.get("debug.build"));
-		//System.out.println("## This is a debug build.");
-		//System.out.println("## If you found a bug, please report it.");
+		//print("## This is a debug build.");
+		//print("## If you found a bug, please report it.");
 		ConsoleInput ci = new ConsoleInput();
 		new Thread(ci).start();
 		File userdatadir = new File("data/");
@@ -49,7 +50,7 @@ public class main {
 		long pend=System.currentTimeMillis();
 		long takes=pend-pstart;
 		print(Lang.get("server.start.port")+serverPort);
-		System.out.println(Lang.get("server.start.takes")+" "+takes+"ms");
+		print(Lang.get("server.start.takes")+" "+takes+"ms");
 
         while(true){
                try (ServerSocket ss = new ServerSocket(serverPort)) {
@@ -61,13 +62,16 @@ public class main {
 
                }catch (Exception e){
                    e.printStackTrace();
+				   System.exit(-1);
                }
 
            }
 
        }
 	   public static void print(String str){
-			  System.out.println(str);
+			  Date dNow = new Date();
+			  SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss");
+			  System.out.println("["+ft.format(dNow)+"] "+str);
 	   }
 	   public static void addtouser(String user,String addvalue){
 			  json.put(user,addvalue);
@@ -106,7 +110,7 @@ public class main {
 	   public static void kill(Socket s){
 	   try{
 	   if(getuser(s.getInetAddress()+":"+s.getPort()+"nick").length() > 0){
-	   System.out.println(Lang.get("user.status.disconnect")+": "+getnick(s)+" ("+s.getInetAddress()+":"+s.getPort()+")");
+	   print(Lang.get("user.status.disconnect")+": "+getnick(s)+" ("+s.getInetAddress()+":"+s.getPort()+")");
 	   }
 	   deluser(s.getInetAddress()+":"+s.getPort()+"nick");
 	   deluser(s.getInetAddress()+":"+s.getPort()+"logged");

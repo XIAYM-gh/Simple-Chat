@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.*;
+import tcp.server.*;
 
 public class UserThread implements Runnable {
 	  boolean flagg=true;
@@ -197,7 +198,7 @@ public class UserThread implements Runnable {
           	} catch (Exception e) {
 			  String err=e.toString();
 			  if(!err.contains("Socket closed") && !err.contains("Connection reset") && !err.contains("Socket is closed")){
-               System.out.println("** Error: "+e.toString()+"\n** Auto Closed Connection.");
+               main.print("** Error: "+e.toString()+" (Auto Closed Connection.)");
 			  flag=false;
 			  //main.kill(s);
 			  }
