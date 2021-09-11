@@ -13,7 +13,7 @@ public class main {
 	public static int serverPort=0;
 	public static String passProtect=null;
 
-    public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException{
 		long pstart=System.currentTimeMillis();
 		Lang.prepare();
 		//print("Simple Chat Server v1 is starting now..");
@@ -52,22 +52,21 @@ public class main {
 		print(Lang.get("server.start.port")+serverPort);
 		print(Lang.get("server.start.takes")+" "+takes+"ms");
 
-        while(true){
-               try (ServerSocket ss = new ServerSocket(serverPort)) {
-                   Socket s = ss.accept();
-                   li.add(s);
+		try (ServerSocket ss = new ServerSocket(serverPort)) {
+			while(true){
+			   Socket s = ss.accept();
+			   li.add(s);
 
-                   uth=new Thread(new UserThread(s,li));
-				   uth.start();
+			   uth=new Thread(new UserThread(s,li));
+			   uth.start();
+			}
 
-               }catch (Exception e){
-                   e.printStackTrace();
+	   }catch (Exception e){
+				   e.printStackTrace();
 				   System.exit(-1);
-               }
+	   }
 
-           }
-
-       }
+	   }
 	   public static void print(String str){
 			  String[] strsp=str.split("\n");
 			  for(String str_:strsp){

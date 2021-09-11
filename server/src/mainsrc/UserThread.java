@@ -96,7 +96,7 @@ public class UserThread implements Runnable {
 					if(!main.hasnick(s)){
 						File ud = new File("data/"+main.getnick(s)+".properties");
 						if(!ud.exists()){
-						main.print("Now creating user data file..");
+						main.print(Lang.get("new.userdata").replaceAll("%user%",main.getnick(s)));
 						String datatext="password="+SHAUtil.SHA256(line.substring(5));
 						FileOutputStream fos = new FileOutputStream(ud);
 						fos.write(datatext.getBytes());
