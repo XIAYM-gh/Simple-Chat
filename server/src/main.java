@@ -69,9 +69,12 @@ public class main {
 
        }
 	   public static void print(String str){
-			  Date dNow = new Date();
-			  SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss");
-			  System.out.println("["+ft.format(dNow)+"] "+str);
+			  String[] strsp=str.split("\n");
+			  for(String str_:strsp){
+				  Date dNow = new Date();
+				  SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss");
+				  System.out.println("["+ft.format(dNow)+"] "+str_);
+			  }
 	   }
 	   public static void addtouser(String user,String addvalue){
 			  json.put(user,addvalue);
