@@ -11,6 +11,7 @@ English | [中文](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/blob/mast
  - Light
 
 # Usage
+[Download latest version](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/releases/tag/v1.0.0)
 
 Requirement: `JDK/JRE 11+`
 
