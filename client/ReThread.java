@@ -15,7 +15,7 @@ import java.io.IOException;
             String line = null;
             while ((line = br.readLine()) != null) {
                 System.out.println("\r"+line);
-				System.out.print("> ");
+                System.out.print("> ");
 
             }
 
