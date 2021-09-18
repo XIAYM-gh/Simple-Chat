@@ -60,7 +60,7 @@ public class UserThread implements Runnable {
                while ((line = br.readLine()) != null && flag == true) {
                 if(line.startsWith("GET") || line.startsWith("POST") || line.startsWith("HTTP")){
                 String Content="<b><i>Warning:</i> This is not a web server, please use simple chat client to connect.</b>";
-                String headers="HTTP/1.1 200 OK"+"\n"+"Server: SimpleChat server"+"\n"+"Date: 1919-8-10 11:45:14"+"\n"+"Content-type:text/html;charset=UTF-8"+"\n"+"Content-Length: "+Content.length()+"\n\n";
+                String headers="HTTP/1.1 200 OK"+"\n"+"Content-type:text/html;charset=UTF-8"+"\n"+"Content-Length: "+Content.length()+"\n\n";
                 bw.write(headers);
                 bw.write(Content);
                 bw.flush();
@@ -112,13 +112,13 @@ public class UserThread implements Runnable {
                         if(pass.equals(config_pass)){
                             main.addtouser(s.getInetAddress()+":"+s.getPort()+"logged","true");
                         }else{
-                            bw.write("Disconnected by server:\nWrong password");
+                            bw.write("disconnect Your password is wrong!");
                             bw.newLine();
                             bw.flush();
                             s.close();
                         }}
                     }else{
-                        bw.write("Disconnected by server:\nYou don't have a nick!");
+                        bw.write("disconnect You don't have a nick!");
                         bw.newLine();
                         bw.flush();
                         s.close();
@@ -128,7 +128,7 @@ public class UserThread implements Runnable {
                     if(line.length() <=7 || line.length() >=18){
                         nerr=true;
                         //Kicked print
-                        bw.write("Disconnected by server:\nYour Nick is too short or too long!");
+                        bw.write("disconnect Your Nick is too short or too long!");
                         bw.newLine();
                         bw.flush();
                         s.close();
@@ -149,8 +149,7 @@ public class UserThread implements Runnable {
                         }
                         }else{
                             nerr=true;
-                            //main.print("*Kicked by server: Your nick is already exists!");
-                            bw.write("Disconnected by server:\nYour nick is already exists!");
+                            bw.write("disconnect Your nick is already exists!");
                             bw.newLine();
                             bw.flush();
                             s.close();
@@ -167,15 +166,14 @@ public class UserThread implements Runnable {
                               if(main.getuser(u2all) == "" || main.getuser(u2all) == null){
                               BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
                               nerr=true;
-                              main.print("*Kicked by server: You don't have a nick!");
-                              dbw.write("Disconnected by server:\nYou don't have a nick!");
+                              dbw.write("disconnect You don't have a nick!");
                               dbw.newLine();
                               dbw.flush();
                               _s.close();
                               }
                               if(!main.getuser(u3all).equals("true") || main.getuser(u3all) == null){
                               BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
-                              dbw.write("Disconnected by server:\nYou're not logged in!");
+                              dbw.write("disconnect You're not logged in!");
                               dbw.newLine();
                               dbw.flush();
                               s.close();

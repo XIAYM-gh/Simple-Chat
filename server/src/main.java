@@ -4,6 +4,8 @@ import java.util.*;
 import java.io.*;
 import java.text.*;
 import org.json.JSONObject;
+import tcp.server.dataTypes.*;
+import tcp.server.plugin.*;
 
 public class main {
 
@@ -12,6 +14,7 @@ public class main {
     public static Thread uth = null;
     public static int serverPort=0;
     public static String passProtect=null;
+    protected static ArrayList<SimpleChatPlugin> plugins = new ArrayList<>();
 
     public static void main(String[] args) throws IOException{
         long pstart=System.currentTimeMillis();
@@ -26,6 +29,10 @@ public class main {
         File userdatadir = new File("data/");
         if(!userdatadir.exists()){
             userdatadir.mkdir();
+        }
+        File plugindir = new File("plugins/");
+        if(!plugindir.exists()){
+            plugindir.mkdir();
         }
         File configfile = new File("server.properties");
         if(!configfile.exists()){
@@ -47,11 +54,34 @@ public class main {
         }catch(Exception e){
             e.printStackTrace();
         }
+        //Load Plugins:
+        print(Lang.get("plugin.loading"));
+        File[] pluginsFile = plugindir.listFiles();
+        for (File f : pluginsFile) {
+                if(f.getName().endsWith(".jar")){
+                        print(Lang.get("subplugin.loading")+" "+f.getName());
+                        URLClassLoader u = new URLClassLoader(new URL[]{ f.toURI().toURL() });
+                        InputStream is = u.getResourceAsStream("config.ini");
+                        if(is != null){
+                                SimpleChatPlugin plugin = initPlugin(is,u);
+                                plugin.setClassLoader(u);
+                                if(plugin != null){
+                                        plugins.add(plugin);
+                                        try{
+                                                plugin.onEnable();
+                                        }catch(Exception e){
+                                                e.printStackTrace();
+                                        }
+                                }
+                        }else{
+                                print(Lang.get("plugin.err.1"));
+                        }
+                }
+        }
         long pend=System.currentTimeMillis();
         long takes=pend-pstart;
         print(Lang.get("server.start.port")+serverPort);
         print(Lang.get("server.start.takes")+" "+takes+"ms");
-
         try (ServerSocket ss = new ServerSocket(serverPort)) {
             while(true){
                Socket s = ss.accept();
@@ -67,6 +97,8 @@ public class main {
        }
 
        }
+
+       //Print Function
        public static void print(String str){
               String[] strsp=str.split("\n");
               for(String str_:strsp){
@@ -76,6 +108,34 @@ public class main {
               }
               System.out.print("> ");
        }
+
+       //Plugin Functions
+       public static SimpleChatPlugin initPlugin(InputStream is, URLClassLoader u){
+               try{
+               Properties pc = new Properties();
+               pc.load(is);
+               Class<?> clazz = u.loadClass(pc.getProperty("main"));
+               SimpleChatPlugin p = (SimpleChatPlugin) clazz.getDeclaredConstructor().newInstance();
+               p.setName(pc.getProperty("name", "Unknown"));
+               p.setVersion(pc.getProperty("version", "1.0"));
+               p.setAuthor(pc.getProperty("author", "Unknown"));
+               return p;
+               }catch(Exception e){
+                       e.printStackTrace();
+                       return null;
+               }
+       }
+
+       public static String getPlugins(){
+               String result_="";
+               int count_=1;
+               for(SimpleChatPlugin p:plugins){
+                       result_=result_+count_+". "+p.getName()+" v"+p.getVersion()+" By "+p.getAuthor()+"\n";
+                       count_++;
+               }
+               return result_;
+       }
+       //Public Functions
        public static void addtouser(String user,String addvalue){
               json.put(user,addvalue);
        }
@@ -161,5 +221,6 @@ public class main {
             }
             return ifp;
        }
+
 }
 

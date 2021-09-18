@@ -47,7 +47,7 @@ package tcp.server;
                         if(usock!=null){
                             try{
                             BufferedWriter tk = new BufferedWriter(new OutputStreamWriter(usock.getOutputStream(),"UTF-8"));
-                            tk.write(Lang.get("disconnect.by.server")+"\n"+Lang.get("server.kicked"));
+                            tk.write("disconnect "+Lang.get("server.kicked"));
                             tk.newLine();
                             tk.flush();
                             usock.close();
@@ -58,6 +58,10 @@ package tcp.server;
                         }
                     }
                 }else{
+				if(line.equals("plugins")){
+						main.print(Lang.get("plugins.list"));
+						main.print(main.getPlugins());
+				}else{
                 if ("stop".equals(line)) {
                 main.print(Lang.get("server.stop"));
                 main.stopServer();
@@ -75,7 +79,7 @@ package tcp.server;
                 }
                 }
                 }
-
+			    }
 
             }
         } catch (UserInterruptException ue) {
