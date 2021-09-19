@@ -25,7 +25,8 @@ public class Lang{
                 "startup.password.enter=Password:\n"+
                 "password.too_short=Your password is too short!\n"+
                 "verify.not_required=The server doesn't require verify, now joining..\n"+
-                "connection.lost=Connection lost..";
+                "connection.lost=Connection lost..\n"+
+                "server.disconnect=Disconnected by server:\\n";
                 FileOutputStream fos = new FileOutputStream(global_lang);
                 fos.write(defa.getBytes());
                 fos.flush();
@@ -43,7 +44,8 @@ public class Lang{
                 "startup.password.enter=密码:\n"+
                 "password.too_short=您的密码长度太短!\n"+
                 "verify.not_required=服务器不需要验证，正在加入..\n"+
-                "connection.lost=连接已丢失..";
+                "connection.lost=连接已丢失..\n"+
+                "server.disconnect=被服务器断开连接:\\n";
                 FileOutputStream fos = new FileOutputStream(zh_lang);
                 fos.write(defa.getBytes());
                 fos.flush();

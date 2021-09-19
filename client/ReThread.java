@@ -14,8 +14,12 @@ import java.io.IOException;
         try {
             String line = null;
             while ((line = br.readLine()) != null) {
+				if(line.startsWith("disconnect ")){
+					System.out.println(Lang.get("server.disconnect")+line.substring(11));
+				}else{
                 System.out.println("\r"+line);
                 System.out.print("> ");
+				}
 
             }
 
