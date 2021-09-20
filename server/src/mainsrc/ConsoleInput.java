@@ -50,7 +50,7 @@ package tcp.server;
                             tk.write("disconnect "+Lang.get("server.kicked"));
                             tk.newLine();
                             tk.flush();
-                            usock.close();
+                            main.killsocket(usock);
                             }catch(Exception e){}
                             main.print(Lang.get("status.success"));
                         }else{
@@ -65,7 +65,7 @@ package tcp.server;
                 if ("stop".equals(line)) {
                 main.print(Lang.get("server.stop"));
                 main.stopServer();
-                Thread.sleep(200);
+                Thread.sleep(350);
                 System.out.print("\r");
                 System.exit(0);
                 }else{
@@ -73,7 +73,7 @@ package tcp.server;
                     main.tellAll("[Server] "+line);
                     main.print("[Server] "+line);
                     }else{
-                    System.out.print("");
+                    System.out.print("\r> ");
                     }
                 }
                 }
@@ -88,7 +88,7 @@ package tcp.server;
             try{
             main.print(Lang.get("server.stop"));
             main.stopServer();
-            Thread.sleep(200);
+            Thread.sleep(350);
             System.out.print("\r");
             System.exit(0);
             }catch(Exception e114514){}
@@ -99,7 +99,7 @@ package tcp.server;
             try{
             main.print(Lang.get("server.stop"));
             main.stopServer();
-            Thread.sleep(200);
+            Thread.sleep(350);
             System.out.print("\r");
             System.exit(0);
             }catch(Exception e1919810){}

@@ -6,17 +6,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.*;
-import tcp.server.*;
+import tcp.server.dataTypes.*;
+import tcp.server.plugin.*;
 
 public class UserThread implements Runnable {
       boolean flagg=true;
       public static boolean nerr=false;
        private Socket s;
        private List<Socket> li;
+       private ArrayList<SimpleChatPlugin> plugins=null;
+       private User user;
 
        public UserThread(Socket s, List<Socket> li) {
            this.s = s;
            this.li = li;
+           this.user= new User(s);
        }
 
        @Override
@@ -115,13 +119,13 @@ public class UserThread implements Runnable {
                             bw.write("disconnect Your password is wrong!");
                             bw.newLine();
                             bw.flush();
-                            s.close();
+                            main.killsocket(s);
                         }}
                     }else{
                         bw.write("disconnect You don't have a nick!");
                         bw.newLine();
                         bw.flush();
-                        s.close();
+                        main.killsocket(s);
                 }
                 }else{
                 if(line.startsWith("NICK ")){
@@ -131,7 +135,7 @@ public class UserThread implements Runnable {
                         bw.write("disconnect Your Nick is too short or too long!");
                         bw.newLine();
                         bw.flush();
-                        s.close();
+                        main.killsocket(s);
                     }else{
                         String[] NickSplit=line.split("NICK ");
                         String unick=NickSplit[1];
@@ -152,13 +156,13 @@ public class UserThread implements Runnable {
                             bw.write("disconnect Your nick is already exists!");
                             bw.newLine();
                             bw.flush();
-                            s.close();
+                            main.killsocket(s);
                         }
                     }
                 }else{
                 if(line.startsWith("CHAT ")&&!line.equals("CHAT ")){
-                  line=line.split("CHAT ")[1];
-                   if(!li.isEmpty()) {
+                  line=line.substring(5);
+                   if(!li.isEmpty() && !line.startsWith("/")) {
                        for (Socket _s : li){
                               String u1all=_s.getInetAddress()+":"+_s.getPort();
                               String u2all=u1all+"nick";
@@ -169,28 +173,36 @@ public class UserThread implements Runnable {
                               dbw.write("disconnect You don't have a nick!");
                               dbw.newLine();
                               dbw.flush();
-                              _s.close();
+                              main.killsocket(_s);
                               }
                               if(!main.getuser(u3all).equals("true") || main.getuser(u3all) == null){
                               BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
                               dbw.write("disconnect You're not logged in!");
                               dbw.newLine();
                               dbw.flush();
-                              s.close();
+                              main.killsocket(s);
                               }
-                               BufferedWriter _bw = new BufferedWriter(new OutputStreamWriter(
-                                       _s.getOutputStream(),"UTF-8"));
+                               BufferedWriter _bw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
                                lox="<"+main.getuser(s.getInetAddress()+":"+s.getPort()+"nick")+ ">" + " " + line;
                               _bw.write(lox);
                                _bw.newLine();
                                _bw.flush();
 
-                       }
+                      }
+                      plugins=main.getPluginArrayList();
+                      Message msg = new Message(user,line);
+                      for(SimpleChatPlugin p:plugins){
+                              try{
+                                    p.onMessage(msg);
+                              }catch(Exception er){
+                                    er.printStackTrace();
+                              }
+                      }
                       String u3all=s.getInetAddress()+":"+s.getPort();
                       main.print(u3all+" "+lox);
                    }
                 }else{
-                    s.close();
+                    main.killsocket(s);
                 }}}}}}}
 
               } catch (Exception e) {

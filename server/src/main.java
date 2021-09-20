@@ -87,6 +87,14 @@ public class main {
                Socket s = ss.accept();
                li.add(s);
 
+               User user=new User(s);
+               for(SimpleChatPlugin p:plugins){
+                       try{
+                            p.onUserConnect(user);
+                       }catch(Exception ezz){
+                            ezz.printStackTrace();
+                       }
+               }
                uth=new Thread(new UserThread(s,li));
                uth.start();
             }
@@ -135,6 +143,11 @@ public class main {
                }
                return result_;
        }
+
+       public static ArrayList<SimpleChatPlugin> getPluginArrayList(){
+               return plugins;
+       }
+
        //Public Functions
        public static void addtouser(String user,String addvalue){
               json.put(user,addvalue);
@@ -177,6 +190,7 @@ public class main {
        }
        deluser(s.getInetAddress()+":"+s.getPort()+"nick");
        deluser(s.getInetAddress()+":"+s.getPort()+"logged");
+       User cuser=new User(s);
        if(li.size() == 1){
               li.removeAll(li);
        }else{
@@ -184,7 +198,18 @@ public class main {
        }
        }catch(Exception e){
               e.printStackTrace();
-              }
+       }
+       }
+       public static void killsocket(Socket s){
+               User cuser=new User(s);
+               for(SimpleChatPlugin p:plugins){
+                       try{
+                             p.onUserDisconnect(cuser);
+                       }catch(Exception e){
+                             e.printStackTrace();
+                       }
+               }
+               s.close();
        }
        public static void tellAll(String msg){
             try{
@@ -203,13 +228,13 @@ public class main {
                 _s.close();
                 }catch(Exception e){}
             }
-			for(SimpleChatPlugin p:plugins){
-				try{
-				p.onDisable();
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-			}
+            for(SimpleChatPlugin p:plugins){
+                try{
+                p.onDisable();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
        }
        public static Socket getUserSocket(String ual){
             Socket back=null;
