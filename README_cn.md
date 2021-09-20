@@ -1,4 +1,4 @@
-### Simple Chat还未完全完成，如果发现问题请提交issue!
+### Simple Chat 还未完全完成，如果发现问题请提交 issue！
 
 # Feature
 
@@ -8,7 +8,7 @@
  - 自动屏蔽错误的连接请求
  - 轻量化
 
-# Usage
+# 用法
 [下载最新版本](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/releases/tag/v1.0.0)
 
 需求: `JDK/JRE 11+`
@@ -27,31 +27,32 @@ java -jar 文件名.jar
 
 `中文(简体) , English`
 
-# Help
+# 帮助
 
 服务端可以使用 `help` 命令查看所有帮助.
 
 客户端目前只有 `stop` 和 `online` 能够使用.
 
-# Compile
+# 编译
 
-编译时需要包含运行库<br>
+编译时需要包含运行库
+
 
 服务端主类: `tcp.server.main`
 
 客户端主类: `tcp.client.main`
 
-可以使用命令编译(jdk 8/11 Release中使用jdk/jre 11):
+可以使用命令编译 (jdk 8/11 Release 中使用 jdk/jre 11):
 
 
 客户端:
 
 ```shell
-#目录 client/
+# 目录 client/
 javac -d . -cp jline3.jar -encoding UTF-8 *.java
 echo "Manifest-Version: 1.0">mf.txt
 echo "Main-Class: tcp.client.main">>mf.txt
-#解压jline3.jar到当前目录生成org和META-INF文件夹
+# 解压 jline3.jar 到当前目录生成 org 和 META-INF 文件夹
 jar -cvmf mf.txt client.jar ./tcp ./org
 ```
 
@@ -62,6 +63,6 @@ jar -cvmf mf.txt client.jar ./tcp ./org
 javac -d . -cp json.jar:jline3.jar -encoding UTF-8 src/*.java src/mainsrc/*.java src/dataTypes/*.java src/plugin/*.java
 echo "Manifest-Version: 1.0">mf.txt
 echo "Main-Class: tcp.client.main">>mf.txt
-#解压json.jar和jline3.jar到当前目录生成org和META-INF文件夹
+# 解压 json.jar 和 jline3.jar 到当前目录生成 org 和 META-INF 文件夹
 jar -cvmf mf.txt server.jar ./tcp ./org
 ```
