@@ -209,7 +209,11 @@ public class main {
                              e.printStackTrace();
                        }
                }
+               try{
                s.close();
+               }catch(Exception e){
+                       e.printStackTrace();
+               }
        }
        public static void tellAll(String msg){
             try{
