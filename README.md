@@ -61,7 +61,7 @@ Server side:
 
 ```shell
 #Work Directory: server/
-javac -d . -cp json.jar:jline3.jar -encoding UTF-8 src/*.java src/mainsrc/*.java src/EncryptUtil/*.java
+javac -d . -cp json.jar:jline3.jar -encoding UTF-8 src/*.java src/mainsrc/*.java src/dataTypes/*.java src/plugin/*.java
 echo "Manifest-Version: 1.0">mf.txt
 echo "Main-Class: tcp.client.main">>mf.txt
 #Unzip json.jar and jline3.jar to get "org" folder

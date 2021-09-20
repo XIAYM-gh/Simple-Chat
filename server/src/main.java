@@ -203,6 +203,13 @@ public class main {
                 _s.close();
                 }catch(Exception e){}
             }
+			for(SimpleChatPlugin p:plugins){
+				try{
+				p.onDisable();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
        }
        public static Socket getUserSocket(String ual){
             Socket back=null;

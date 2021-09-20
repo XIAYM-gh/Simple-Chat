@@ -65,7 +65,7 @@ package tcp.server;
                 if ("stop".equals(line)) {
                 main.print(Lang.get("server.stop"));
                 main.stopServer();
-                Thread.sleep(1000);
+                Thread.sleep(200);
                 System.out.print("\r");
                 System.exit(0);
                 }else{
@@ -88,7 +88,7 @@ package tcp.server;
             try{
             main.print(Lang.get("server.stop"));
             main.stopServer();
-            Thread.sleep(1000);
+            Thread.sleep(200);
             System.out.print("\r");
             System.exit(0);
             }catch(Exception e114514){}
@@ -99,7 +99,7 @@ package tcp.server;
             try{
             main.print(Lang.get("server.stop"));
             main.stopServer();
-            Thread.sleep(1000);
+            Thread.sleep(200);
             System.out.print("\r");
             System.exit(0);
             }catch(Exception e1919810){}
