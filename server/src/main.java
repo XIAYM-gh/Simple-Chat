@@ -188,9 +188,16 @@ public class main {
        if(getuser(s.getInetAddress()+":"+s.getPort()+"nick").length() > 0){
        print(Lang.get("user.status.disconnect")+": "+getnick(s)+" ("+s.getInetAddress()+":"+s.getPort()+")");
        }
+       DisconnectedUser cuser=new DisconnectedUser(getuser(s.getInetAddress()+":"+s.getPort()+"nick"),s.getInetAddress()+":"+s.getPort());
+       for(SimpleChatPlugin p:plugins){
+               try{
+                     p.onUserDisconnect(cuser);
+               }catch(Exception edd){
+                     edd.printStackTrace();
+               }
+       }
        deluser(s.getInetAddress()+":"+s.getPort()+"nick");
        deluser(s.getInetAddress()+":"+s.getPort()+"logged");
-       User cuser=new User(s);
        if(li.size() == 1){
               li.removeAll(li);
        }else{
@@ -201,14 +208,6 @@ public class main {
        }
        }
        public static void killsocket(Socket s){
-               User cuser=new User(s);
-               for(SimpleChatPlugin p:plugins){
-                       try{
-                             p.onUserDisconnect(cuser);
-                       }catch(Exception e){
-                             e.printStackTrace();
-                       }
-               }
                try{
                s.close();
                }catch(Exception e){

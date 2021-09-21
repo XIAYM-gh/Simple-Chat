@@ -29,7 +29,13 @@ abstract class JavaCore{
         */
         public void onUserConnect(User user){}
         /* On user leave event */
-        public void onUserDisconnect(User user){}
+
+        /*
+         * DisconnectedUser:
+         * user.getIP() - returns the IP Address of the user
+         * user.getNick() - returns the nick name of the user
+        */
+        public void onUserDisconnect(DisconnectedUser user){}
 }
 
 public class SimpleChatPlugin extends JavaCore{
