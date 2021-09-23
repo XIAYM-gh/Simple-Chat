@@ -112,7 +112,7 @@ public class main {
               for(String str_:strsp){
                   Date dNow = new Date(System.currentTimeMillis());
                   SimpleDateFormat flast = new SimpleDateFormat("HH:mm:ss");
-                  System.out.println("\r["+flast.format(dNow)+"] "+str_);
+                  System.out.println("\r["+flast.format(dNow)+"][INFO] "+str_);
               }
               System.out.print("> ");
        }

@@ -16,7 +16,6 @@ public class User{
         public User(Socket s){
                 try{
                 this.s=s;
-                this.userNick=main.getnick(s);
                 this.userIP=s.getInetAddress()+":"+s.getPort();
                 this.bw = new BufferedWriter(new OutputStreamWriter(s.getOutputStream(),"UTF-8"));
                 }catch(Exception e){
@@ -43,7 +42,7 @@ public class User{
 
         /* Get the user's nickname */
         public String getNick(){
-                return userNick;
+                return main.getuser(userIP+"nick");
         }
 
         /* Get the socket */
