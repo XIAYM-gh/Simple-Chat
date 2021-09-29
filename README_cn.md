@@ -9,7 +9,7 @@
  - 轻量化
 
 # 用法
-[下载最新版本](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/releases/tag/v1.0.0)
+[下载最新版本](https://github.com/XIAYM-gh/Simple-Chat/releases/tag/v1.0.0)
 
 需求: `JDK/JRE 11+`
 

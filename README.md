@@ -1,6 +1,6 @@
 ### Simple Chat is not finish yet, if you find a bug or some bugs, please open an issue!
 
-English | [中文](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/blob/master/README_cn.md)
+English | [中文](https://github.com/XIAYM-gh/Simple-Chat/blob/master/README_cn.md)
 
 # Feature
 
@@ -11,7 +11,7 @@ English | [中文](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/blob/mast
  - Lightweight
 
 # Usage
-[Download latest version](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/releases/tag/v1.0.0)
+[Download latest version](https://github.com/XIAYM-gh/Simple-Chat/releases/tag/v1.0.0)
 
 Requirement: `JDK/JRE 11+`
 
