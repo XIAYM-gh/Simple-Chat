@@ -8,7 +8,7 @@ English | [中文](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/blob/mast
  - Kick online users by IP Address
  - Returns a "warning page" if someone uses a web browser to access
  - Not reporting wrong connections (e.g. Using a web browser)
- - Light
+ - Lightweight
 
 # Usage
 [Download latest version](https://github.com/XIAYM-gh/Java-Socket-Simple-Chat/releases/tag/v1.0.0)
