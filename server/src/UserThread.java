@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.*;
 import tcp.server.dataTypes.*;
 import tcp.server.plugin.*;
+import org.json.*;
 
 public class UserThread implements Runnable {
       boolean flagg=true;
@@ -23,7 +24,7 @@ public class UserThread implements Runnable {
            this.user= new User(s);
        }
 
-       @Override
+      @Override
        public void run() {
             if(main.getIfPassProtect() == false){
                 main.addtouser(s.getInetAddress()+":"+s.getPort()+"logged","true");
@@ -39,10 +40,8 @@ public class UserThread implements Runnable {
                             String unck=main.getuser(s.getInetAddress()+":"+s.getPort()+"nick");
                             if(nerr == false && main.hasnick(s)){
                             for (Socket _s : li){
-                            BufferedWriter zdwk = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
-                            zdwk.write(unck+" "+Lang.get("user.leave.chat"));
-                            zdwk.newLine();
-                            zdwk.flush();
+                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
+                            main.bc(unck+" "+Lang.get("user.leave.chat"),"info",bw);
                             }
                             }
                             }catch(Exception eee){}
@@ -64,7 +63,7 @@ public class UserThread implements Runnable {
                while ((line = br.readLine()) != null && flag == true) {
                 if(line.startsWith("GET") || line.startsWith("POST") || line.startsWith("HTTP")){
                 String Content="<b><i>Warning:</i> This is not a web server, please use simple chat client to connect.</b>";
-                String headers="HTTP/1.1 200 OK"+"\n"+"Content-type:text/html;charset=UTF-8"+"\n"+"Content-Length: "+Content.length()+"\n\n";
+                String headers="HTTP/1.1 200 OK"+"\n"+"Content-type:text/html;charset=UTF-8"+"\n"+"Content-Length: "+Content.getBytes().length+"\n\n";
                 bw.write(headers);
                 bw.write(Content);
                 bw.flush();
@@ -91,9 +90,7 @@ public class UserThread implements Runnable {
                         String getunick=main.getuser(si.getInetAddress()+":"+si.getPort()+"nick");
                         msgx=msgx+getunick+" ";
                     }
-                    bw.write(msgx);
-                    bw.newLine();
-                    bw.flush();
+                    main.bc(msgx, "info", bw);
                 }else{
                         
                 if(line.startsWith("PASS ")){
@@ -116,25 +113,18 @@ public class UserThread implements Runnable {
                         if(pass.equals(config_pass)){
                             main.addtouser(s.getInetAddress()+":"+s.getPort()+"logged","true");
                         }else{
-                            bw.write("disconnect Your password is wrong!");
-                            bw.newLine();
-                            bw.flush();
+                            main.bc("Password is not correct.", "kick", bw);
                             main.killsocket(s);
                         }}
                     }else{
-                        bw.write("disconnect You don't have a nick!");
-                        bw.newLine();
-                        bw.flush();
+                        main.bc("You don't already have a nick!", "kick", bw);
                         main.killsocket(s);
                 }
                 }else{
                 if(line.startsWith("NICK ")){
                     if(line.length() <=7 || line.length() >=18){
                         nerr=true;
-                        //Kicked print
-                        bw.write("disconnect Your Nick is too short or too long!");
-                        bw.newLine();
-                        bw.flush();
+                        main.bc("Your nick is too short or too long!", "kick", bw);
                         main.killsocket(s);
                     }else{
                         String[] NickSplit=line.split("NICK ");
@@ -142,20 +132,14 @@ public class UserThread implements Runnable {
                         if(!main.nickisset(unick) && !main.hasnick(s)){
                         main.addtouser(uall+"nick",unick.replaceAll(" ","_"));
                         main.print(Lang.get("user.status.connect")+": "+unick+" ("+s.getInetAddress()+":"+s.getPort()+")");
-                        bw.write(Lang.get("join.welcome")+"\n"+Lang.get("welcome.users.online")+li.size());
-                        bw.newLine();
-                        bw.flush();
+                        main.bc(Lang.get("join.welcome")+"\n"+Lang.get("welcome.users.online")+li.size(),"info",bw);
                         for (Socket _s : li){
                             BufferedWriter zdw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
-                            zdw.write(unick+" "+Lang.get("user.join.chat"));
-                            zdw.newLine();
-                            zdw.flush();
+                            main.bc(unick+" "+Lang.get("user.join.chat"),"info",zdw);
                         }
                         }else{
                             nerr=true;
-                            bw.write("disconnect Your nick is already exists!");
-                            bw.newLine();
-                            bw.flush();
+                            main.bc("This user is exists!","kick",bw);
                             main.killsocket(s);
                         }
                     }
@@ -170,23 +154,17 @@ public class UserThread implements Runnable {
                               if(main.getuser(u2all) == "" || main.getuser(u2all) == null){
                               BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
                               nerr=true;
-                              dbw.write("disconnect You don't have a nick!");
-                              dbw.newLine();
-                              dbw.flush();
+                              main.bc("You don't have a nick!","kick",dbw);
                               main.killsocket(_s);
                               }
                               if(!main.getuser(u3all).equals("true") || main.getuser(u3all) == null){
                               BufferedWriter dbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
-                              dbw.write("disconnect You're not logged in!");
-                              dbw.newLine();
-                              dbw.flush();
+                              main.bc("You're not logged in!","kick",dbw);
                               main.killsocket(s);
                               }
                                BufferedWriter _bw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
-                               lox="<"+main.getuser(s.getInetAddress()+":"+s.getPort()+"nick")+ ">" + " " + line;
-                              _bw.write(lox);
-                               _bw.newLine();
-                               _bw.flush();
+                               lox=main.getuser(s.getInetAddress()+":"+s.getPort()+"nick");
+                              main.bcu(lox,line,"chat",_bw);
 
                       }
                       plugins=main.getPluginArrayList();
@@ -199,7 +177,7 @@ public class UserThread implements Runnable {
                               }
                       }
                       String u3all=s.getInetAddress()+":"+s.getPort();
-                      main.print(u3all+" "+lox);
+                      main.print(u3all+" "+lox+": "+line);
                    }
                 }else{
                     main.killsocket(s);
@@ -213,5 +191,5 @@ public class UserThread implements Runnable {
               //main.kill(s);
               }
            }
-          }
+          } 
 }

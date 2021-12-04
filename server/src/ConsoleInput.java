@@ -47,9 +47,7 @@ package tcp.server;
                         if(usock!=null){
                             try{
                             BufferedWriter tk = new BufferedWriter(new OutputStreamWriter(usock.getOutputStream(),"UTF-8"));
-                            tk.write("disconnect "+Lang.get("server.kicked"));
-                            tk.newLine();
-                            tk.flush();
+                            main.bc(Lang.get("server.kicked"),"kick",tk);
                             main.killsocket(usock);
                             }catch(Exception e){}
                             main.print(Lang.get("status.success"));

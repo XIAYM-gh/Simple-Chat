@@ -19,11 +19,9 @@ public class main {
     public static void main(String[] args) throws IOException{
         long pstart=System.currentTimeMillis();
         Lang.prepare();
-        //print("Simple Chat Server v1 is starting now..");
+
         print(Lang.get("server.startup"));
-        print(Lang.get("debug.build"));
-        //print("## This is a debug build.");
-        //print("## If you found a bug, please report it.");
+
         ConsoleInput ci = new ConsoleInput();
         new Thread(ci).start();
         File userdatadir = new File("data/");
@@ -38,7 +36,7 @@ public class main {
         if(!configfile.exists()){
             print(Lang.get("config.not.exist"));
             configfile.createNewFile();
-            String defa="server_port=12345\npassword_protect=true";
+            String defa="server_port=12345\npassword_protect=true\ndebug_build=true";
             FileOutputStream fos = new FileOutputStream(configfile);
             fos.write(defa.getBytes());
             fos.flush();
@@ -51,6 +49,9 @@ public class main {
             prop.load(ina);
             serverPort=Integer.parseInt(prop.getProperty("server_port","12345"));
             passProtect=prop.getProperty("password_protect","true");
+            if(prop.getProperty("password_protect","false").equals("true")){
+                    print(Lang.get("debug.build"));
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -91,8 +92,8 @@ public class main {
                for(SimpleChatPlugin p:plugins){
                        try{
                             p.onUserConnect(user);
-                       }catch(Exception ezz){
-                            ezz.printStackTrace();
+                       }catch(Exception e_){
+                            e_.printStackTrace();
                        }
                }
                uth=new Thread(new UserThread(s,li));
@@ -106,13 +107,12 @@ public class main {
 
        }
 
-       //Print Function
        public static void print(String str){
               String[] strsp=str.split("\n");
               for(String str_:strsp){
                   Date dNow = new Date(System.currentTimeMillis());
                   SimpleDateFormat flast = new SimpleDateFormat("HH:mm:ss");
-                  System.out.println("\r["+flast.format(dNow)+"][INFO] "+str_);
+                  System.out.println("\r["+flast.format(dNow)+"] "+str_);
               }
               System.out.print("> ");
        }
@@ -120,14 +120,14 @@ public class main {
        //Plugin Functions
        public static SimpleChatPlugin initPlugin(InputStream is, URLClassLoader u){
                try{
-               Properties pc = new Properties();
-               pc.load(is);
-               Class<?> clazz = u.loadClass(pc.getProperty("main"));
-               SimpleChatPlugin p = (SimpleChatPlugin) clazz.getDeclaredConstructor().newInstance();
-               p.setName(pc.getProperty("name", "Unknown"));
-               p.setVersion(pc.getProperty("version", "1.0"));
-               p.setAuthor(pc.getProperty("author", "Unknown"));
-               return p;
+                    Properties pc = new Properties();
+                    pc.load(is);
+                    Class<?> clazz = u.loadClass(pc.getProperty("main"));
+                    SimpleChatPlugin p = (SimpleChatPlugin) clazz.getDeclaredConstructor().newInstance();
+                    p.setName(pc.getProperty("name", "Unknown"));
+                    p.setVersion(pc.getProperty("version", "1.0"));
+                    p.setAuthor(pc.getProperty("author", "Unknown"));
+                    return p;
                }catch(Exception e){
                        e.printStackTrace();
                        return null;
@@ -152,12 +152,15 @@ public class main {
        public static void addtouser(String user,String addvalue){
               json.put(user,addvalue);
        }
+
        public static void deluser(String user){
               json.put(user,"");
        }
+
        public static String getnick(Socket s){
                return getuser(s.getInetAddress()+":"+s.getPort()+"nick");
        }
+
        public static String getuser(String user){
               String rt;
               try{
@@ -167,6 +170,7 @@ public class main {
               }
               return rt;
        }
+
        public static boolean nickisset(String nick){
               for(Object itm:json.keySet()){
                       String a=json.getString(itm.toString());
@@ -176,6 +180,7 @@ public class main {
               }
        return false;
        }
+
        public static boolean hasnick(Socket _s){
                String uall=_s.getInetAddress()+":"+_s.getPort();
                if(nickisset(uall+"nick")){
@@ -183,6 +188,7 @@ public class main {
                }
                return false;
        }
+
        public static void kill(Socket s){
        try{
        if(getuser(s.getInetAddress()+":"+s.getPort()+"nick").length() > 0){
@@ -198,32 +204,35 @@ public class main {
        }
        deluser(s.getInetAddress()+":"+s.getPort()+"nick");
        deluser(s.getInetAddress()+":"+s.getPort()+"logged");
+
        if(li.size() == 1){
               li.removeAll(li);
        }else{
               li.remove(s);
        }
+
        }catch(Exception e){
               e.printStackTrace();
        }
        }
+
        public static void killsocket(Socket s){
                try{
-               s.close();
+                    s.close();
                }catch(Exception e){
                        e.printStackTrace();
                }
        }
+
        public static void tellAll(String msg){
             try{
                for (Socket _s : li){
                 BufferedWriter tbw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
-                tbw.write(msg);
-                tbw.newLine();
-                tbw.flush();
+                bc(msg,"info",tbw);
             }
             }catch(Exception e){}
        }
+
        public static void stopServer(){
             tellAll(Lang.get("tellall.server.stop"));
             for (Socket _s : li){
@@ -239,6 +248,7 @@ public class main {
                 }
             }
        }
+
        public static Socket getUserSocket(String ual){
             Socket back=null;
             for (Socket _s : li){
@@ -247,8 +257,9 @@ public class main {
                     back=_s;
                 }
             }
-            return back;
+         return back;
        }
+
        public static boolean getIfPassProtect(){
             boolean ifp=false;
             if(passProtect.equals("true")){
@@ -257,5 +268,30 @@ public class main {
             return ifp;
        }
 
+       public static void bc(String bufdata, String type, BufferedWriter bw) throws IOException{
+               JSONObject jo = new JSONObject();
+               jo.put("data_type",type);
+               jo.put("data_msg",bufdata);
+               jo.put("data_time",System.currentTimeMillis());
+
+               bw.write(jo.toString());
+               bw.newLine();
+               bw.flush();
+       }
+
+       public static void bcu(String user, String data, String type, BufferedWriter bw) throws IOException{
+               JSONObject jo = new JSONObject();
+               jo.put("data_type",type);
+               jo.put("data_user",user);
+               jo.put("data_msg",data);
+               jo.put("data_time",System.currentTimeMillis());
+
+               bw.write(jo.toString());
+               bw.newLine();
+               bw.flush();
+       }
+
+ 
+ 
 }
 
