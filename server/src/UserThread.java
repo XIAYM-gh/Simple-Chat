@@ -11,7 +11,7 @@ import tcp.server.plugin.*;
 import org.json.*;
 
 public class UserThread implements Runnable {
-      boolean flagg=true;
+      boolean execute_able=true;
       public static boolean nerr=false;
        private Socket s;
        private List<Socket> li;
@@ -30,12 +30,12 @@ public class UserThread implements Runnable {
                 main.addtouser(s.getInetAddress()+":"+s.getPort()+"logged","true");
             }
             Thread t = new Thread(()->{
-                    while(flagg){
+                    while(execute_able){
                         try{
                             Thread.sleep(200);
                             s.sendUrgentData(0xFF);
                         }catch(Exception e){
-                            flagg=false;
+                            execute_able=false;
                             try{
                             String unck=main.getuser(s.getInetAddress()+":"+s.getPort()+"nick");
                             if(nerr == false && main.hasnick(s)){
@@ -46,6 +46,7 @@ public class UserThread implements Runnable {
                             }
                             }catch(Exception eee){}
                             main.kill(s);
+                            Thread.currentThread().interrupt();
                         }
                     }
                     });
@@ -85,11 +86,18 @@ public class UserThread implements Runnable {
 
                 if(line.equals("CHAT online")){
                         //String msgx="There is "+li.size()+" users online.\nOnline users: ";
-                        String msgx=Lang.get("cmd.online.getusers").replaceAll("%users%",""+li.size());
+                        String msgx=Lang.get("cmd.online.getusers");
+                        String msgt="";
+
+                        int tempInt = 0;
                     for(Socket si:li){
                         String getunick=main.getuser(si.getInetAddress()+":"+si.getPort()+"nick");
-                        msgx=msgx+getunick+" ";
+                        if(getunick.length() > 0){
+                                tempInt++;
+                        }
+                        msgt=msgt+getunick+" ";
                     }
+                    msgx=msgx.replaceAll("%users%",tempInt + "") + msgt;
                     main.bc(msgx, "info", bw);
                 }else{
                         
@@ -132,7 +140,16 @@ public class UserThread implements Runnable {
                         if(!main.nickisset(unick) && !main.hasnick(s)){
                         main.addtouser(uall+"nick",unick.replaceAll(" ","_"));
                         main.print(Lang.get("user.status.connect")+": "+unick+" ("+s.getInetAddress()+":"+s.getPort()+")");
-                        main.bc(Lang.get("join.welcome")+"\n"+Lang.get("welcome.users.online")+li.size(),"info",bw);
+
+                        int tempInt = 0;
+                        for(Socket si:li){
+                        String getunick=main.getuser(si.getInetAddress()+":"+si.getPort()+"nick");
+                        if(getunick.length() > 0){
+                                tempInt++;
+                        }
+                        }
+
+                        main.bc(Lang.get("join.welcome")+"\n"+Lang.get("welcome.users.online")+tempInt,"info",bw);
                         for (Socket _s : li){
                             BufferedWriter zdw = new BufferedWriter(new OutputStreamWriter(_s.getOutputStream(),"UTF-8"));
                             main.bc(unick+" "+Lang.get("user.join.chat"),"info",zdw);

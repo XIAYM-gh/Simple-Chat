@@ -14,6 +14,7 @@ public class main {
     public static Thread uth = null;
     public static int serverPort=0;
     public static String passProtect=null;
+    public static Properties prop = new Properties();
     protected static ArrayList<SimpleChatPlugin> plugins = new ArrayList<>();
 
     public static void main(String[] args) throws IOException{
@@ -36,7 +37,7 @@ public class main {
         if(!configfile.exists()){
             print(Lang.get("config.not.exist"));
             configfile.createNewFile();
-            String defa="server_port=12345\npassword_protect=true\ndebug_build=true";
+            String defa="server_port=12345\npassword_protect=true\ndebug_build=true\ndebug_mode=false";
             FileOutputStream fos = new FileOutputStream(configfile);
             fos.write(defa.getBytes());
             fos.flush();
@@ -45,11 +46,10 @@ public class main {
         print(Lang.get("config.loading"));
         try{
             BufferedReader ina = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(new File("server.properties"))),"UTF-8"));
-            Properties prop = new Properties();
             prop.load(ina);
             serverPort=Integer.parseInt(prop.getProperty("server_port","12345"));
             passProtect=prop.getProperty("password_protect","true");
-            if(prop.getProperty("password_protect","false").equals("true")){
+            if(prop.getProperty("debug_build","false").equals("true")){
                     print(Lang.get("debug.build"));
             }
         }catch(Exception e){
@@ -108,11 +108,16 @@ public class main {
        }
 
        public static void print(String str){
+              String classname = new Throwable().getStackTrace()[1].getClassName();
               String[] strsp=str.split("\n");
               for(String str_:strsp){
                   Date dNow = new Date(System.currentTimeMillis());
                   SimpleDateFormat flast = new SimpleDateFormat("HH:mm:ss");
-                  System.out.println("\r["+flast.format(dNow)+"] "+str_);
+                  if(classname.startsWith("tcp.server") || prop.getProperty("debug_mode","false").equals("false")){
+                          System.out.println("\r["+flast.format(dNow)+"] "+str_);
+                  }else{
+                          System.out.println("\r["+flast.format(dNow)+"] ["+classname+"] "+str_);
+                  }
               }
               System.out.print("> ");
        }
