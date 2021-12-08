@@ -62,7 +62,7 @@ public class main {
                 if(f.getName().endsWith(".jar")){
                         print(Lang.get("subplugin.loading")+" "+f.getName());
                         URLClassLoader u = new URLClassLoader(new URL[]{ f.toURI().toURL() });
-                        InputStream is = u.getResourceAsStream("config.ini");
+                        InputStream is = u.getResourceAsStream("config.properties");
                         if(is != null){
                                 SimpleChatPlugin plugin = initPlugin(is,u);
                                 plugin.setClassLoader(u);
