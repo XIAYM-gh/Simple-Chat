@@ -8,12 +8,12 @@ Reference part:
 ### Simple doc
 To write a Plugin, you should prepare these files:
 
-- ./config.properties
-  ** Example: **
-  ** name=examplePlugin **
-  ** version=1.0 **
-  ** author=uwu **
-  ** main=package.name.className (like cn.xiaym.testPlugin.main) **
+- ./config.properties<br>
+  **Example:**<br>
+  **name=examplePlugin**<br>
+  **version=1.0**<br>
+  **author=uwu**<br>
+  **main=package.name.className (like cn.xiaym.testPlugin.main)**<br>
 
 - ./path/to/your/classes/
 
