@@ -19,7 +19,7 @@ import java.io.*;
             s.sendUrgentData(0xFF);
         } catch (Exception e) {
             flag=false;
-            System.out.println(Lang.get("connection.lost"));
+            main.print(Lang.get("connection.lost"),System.currentTimeMillis());
             System.exit(0);
         }
         }

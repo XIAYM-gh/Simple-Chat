@@ -1,9 +1,9 @@
 package tcp.client;
 import java.net.*;
 import java.io.*;
-import java.util.Scanner;
-import tcp.client.*;
 import java.nio.charset.*;
+import java.util.*;
+import java.text.*;
 
 public class main {
 
@@ -18,20 +18,20 @@ public class main {
         Lang.prepare();
 
         String nick="ERROR";
-        System.out.println("Simple Chat Client - v1");
-        String nickc = cons.readLine(Lang.get("startup.nick.enter"));
+        print("Simple Chat Client - v1",System.currentTimeMillis());
+        String nickc = cons.readLine("\r"+Lang.get("startup.nick.enter"));
         if(nickc != null && nickc != "" && nickc.length() >= 3){
             nick=nickc;
         }else{
             nick="ERROR";
-            System.out.println(Lang.get("nick.invalid"));
+            print(Lang.get("nick.invalid"));
             System.exit(-1);
         }
 
         String servip="127.0.0.1:12345";
         String ipadd="127.0.0.1";
         int port=12345;
-        servip=cons.readLine(Lang.get("startup.ip.enter"));
+        servip=cons.readLine("\r"+Lang.get("startup.ip.enter"));
              if(!servip.contains(":")){
                      ipadd=servip;
                      port=12345;
@@ -46,8 +46,8 @@ public class main {
         try{
         s = new Socket(ipadd,port);
         }catch(Exception e){
-            System.out.println(Lang.get("connect.failed"));
-            System.out.println(e.toString());
+            print(Lang.get("connect.failed"));
+            print(e.toString());
             System.exit(-2);
         }
 
@@ -57,7 +57,6 @@ public class main {
         bw = new BufferedWriter(new OutputStreamWriter(
                 s.getOutputStream(),"UTF-8"));
 
-        //System.out.println("开始查询服务器验证，如果长时间卡在这一步请重启客户端!");
         print(Lang.get("process.check_verify"));
         bw.write("SIMPLE_CHAT_CHECK_NEED_PASSWORD");
         bw.newLine();
@@ -69,29 +68,25 @@ public class main {
                 break;
         }
         if(status_pass.equals("true")){
-                //System.out.println("服务器需要身份验证，请输入您的密码来注册/登录");
                 print(Lang.get("verify.password_required"));
                 char[] upc = cons.readPassword(Lang.get("startup.password.enter"));
                 String upa = String.valueOf(upc);
                 if(upa.length() > 3){
                     bw.write("NICK "+nick);
                     bw.newLine();
-                    bw.flush();
                     bw.write("PASS "+upa);
                     bw.newLine();
                     bw.flush();
                 }else{
-                    System.out.println(Lang.get("password.too_short"));
+                    print(Lang.get("password.too_short"));
                     System.exit(-4);
                 }
         }else{
-                System.out.println(Lang.get("verify.not_required"));
+                print(Lang.get("verify.not_required"));
                 bw.write("NICK "+nick);
                 bw.newLine();
                 bw.flush();
         }
-
-        System.out.print("> ");
 
         SeThread st = new SeThread(bw,s);
         ReThread rt = new ReThread(br);
@@ -104,7 +99,19 @@ public class main {
         }
     }
 
-    public static void print(String str){
-        System.out.println(str);
+    public static void print(String str, long... timeStack){
+        Long time= (long) 0;
+        if(timeStack.length == 0){
+                time=System.currentTimeMillis();
+        }else{
+                time=timeStack[0];
+        }
+        String[] strsp=str.split("\n");
+              for(String str_:strsp){
+                  Date dNow = new Date(time);
+                  SimpleDateFormat flast = new SimpleDateFormat("HH:mm:ss");
+                  System.out.println("\r["+flast.format(dNow)+"] "+str_);
+              }
+              System.out.print("> ");
     }
 }

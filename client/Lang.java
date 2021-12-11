@@ -52,7 +52,7 @@ public class Lang{
                 fos.close();
             }
             }catch(Exception e){
-                main.print("Language Error: "+e.toString());
+                main.print("Language Error: "+e.toString(),System.currentTimeMillis());
                 System.exit(-3);
             }
         }
@@ -70,7 +70,10 @@ public class Lang{
                 BufferedReader ina = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(new File("lang/"+lolol+".properties"))),"UTF-8"));
                 Properties prop = new Properties();
                 prop.load(ina);
-                returns=prop.getProperty(key,"\""+key+"\" was not found in "+lolol+".properties, please run command \"createLang\" to update your language.");
+                returns=prop.getProperty(key,"");
+                if(returns.equals("")){
+                        main.print("\""+key+"\" was not found in "+lolol+".properties, please run command \"createLang\" to update your language.",System.currentTimeMillis());
+                }
             }catch(Exception e){}
             return returns;
         }

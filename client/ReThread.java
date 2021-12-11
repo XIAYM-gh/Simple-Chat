@@ -16,15 +16,13 @@ import org.json.*;
             String line = null;
             while ((line = br.readLine()) != null) {
                 JSONObject jo = new JSONObject(line);
+                long time = jo.getLong("data_time");
 				if(jo.getString("data_type").equals("kick")){
-					System.out.println("\r"+Lang.get("server.disconnect")+jo.getString("data_msg"));
-                    System.out.print("> ");
+					main.print(""+Lang.get("server.disconnect")+jo.getString("data_msg"),time);
 				}else if(jo.getString("data_type").equals("info")){
-                    System.out.println("\r"+jo.getString("data_msg"));
-                    System.out.print("> ");
+                    main.print(""+jo.getString("data_msg"),time);
                 }else if(jo.getString("data_type").equals("chat")){
-                    System.out.println("\r<"+jo.getString("data_user")+"> "+jo.getString("data_msg"));
-                    System.out.print("> ");
+                    main.print("<"+jo.getString("data_user")+"> "+jo.getString("data_msg"),time);
 				}
 
             }
