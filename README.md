@@ -1,69 +1,68 @@
-### Simple Chat is not finish yet, if you find a bug or some bugs, please open an issue!
-
-English | [中文](https://github.com/XIAYM-gh/Simple-Chat/blob/master/README_cn.md)
+### Simple Chat 还未完全完成，如果发现问题请提交 issue！
 
 # Feature
 
- - Heartbeat sending
- - Kick online users by IP Address
- - Returns a "warning page" if someone uses a web browser to access
- - Not reporting wrong connections (e.g. Using a web browser)
- - Lightweight
+ - 多线程心跳检测
+ - 能够踢出在线用户(通过IP地址)
+ - 当浏览器访问时会返回警告页面
+ - 自动屏蔽错误的连接请求
+ - 轻量化
 
-# Usage
-[Download latest version](https://github.com/XIAYM-gh/Simple-Chat/releases/tag/v1.0.0)
+# 用法
+[下载最新版本](https://github.com/XIAYM-gh/Simple-Chat/releases/tag/v1.0.0)
 
-Requirement: `JDK/JRE 11+`
+需求: `JDK/JRE 11+`
 
-How to launch:<br>
+启动方式:<br>
 
 ```shell
-java -jar <File name>.jar
+java -jar 文件名.jar
 ```
 
-Server-side language support:
+服务端目前支持的语言:
 
 `中文(简体) , English`
 
-Client-side language support:
+客户端目前支持的语言:
 
 `中文(简体) , English`
 
-# Help
+# 帮助
 
-Server-side: type `help`
+服务端可以使用 `help` 命令查看所有帮助.
 
-Client-side: only `stop` and `online`
+客户端目前只有 `stop` 和 `online` 能够使用.
 
-# Compile
+# 编译
 
-It requires some libs<br>
-
-Server's main class: `tcp.server.main`
-
-Client's main class: `tcp.client.main`
-
-You can use the commands below to compile(jdk 8/11):
+编译时需要包含运行库
 
 
-Client side:
+服务端主类: `tcp.server.main`
+
+客户端主类: `tcp.client.main`
+
+可以使用命令编译 (jdk 8/11 , Release 中使用 jdk/jre 11):
+
+
+客户端:
 
 ```shell
-#Work Directory: client/
-javac -d . -cp jline3.jar -encoding UTF-8 *.java
+# 目录 client/
+javac -d . -cp jline3.jar:json.jar -encoding UTF-8 *.java
 echo "Manifest-Version: 1.0">mf.txt
 echo "Main-Class: tcp.client.main">>mf.txt
-#Unzip jline3.jar to get "org" folder
+# 解压 jline3.jar 到当前目录生成 org 和 META-INF 文件夹
 jar -cvmf mf.txt client.jar ./tcp ./org
 ```
 
-Server side:
+服务端:
 
 ```shell
-#Work Directory: server/
+# 目录 server/
 javac -d . -cp json.jar:jline3.jar -encoding UTF-8 src/*.java src/mainsrc/*.java src/dataTypes/*.java src/plugin/*.java
 echo "Manifest-Version: 1.0">mf.txt
 echo "Main-Class: tcp.client.main">>mf.txt
-#Unzip json.jar and jline3.jar to get "org" folder
+# 解压 json.jar 和 jline3.jar 到当前目录生成 org 和 META-INF 文件夹
 jar -cvmf mf.txt server.jar ./tcp ./org
 ```
