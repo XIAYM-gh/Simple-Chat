@@ -100,12 +100,7 @@ public class main {
     }
 
     public static void print(String str, long... timeStack){
-        Long time= (long) 0;
-        if(timeStack.length == 0){
-                time=System.currentTimeMillis();
-        }else{
-                time=timeStack[0];
-        }
+        Long time = (timeStack.length==0)?System.currentTimeMillis():timeStack[0];
         String[] strsp=str.split("\n");
               for(String str_:strsp){
                   Date dNow = new Date(time);
